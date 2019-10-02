@@ -11,53 +11,50 @@ const PORT = process.env.port || '8080';
 
 const store = databox.NewStoreClient(DATABOX_ZMQ_ENDPOINT, DATABOX_ARBITER_ENDPOINT);
 
-//get the default store metadata
-const metaData = databox.NewDataSourceMetadata();
-
 //create store schema for saving key/value config data
-const helloWorldConfig = {
-    ...databox.NewDataSourceMetadata(),
-    Description: 'hello world config',
-    ContentType: 'application/json',
-    Vendor: 'Databox Inc.',
-    DataSourceType: 'helloWorldConfig',
-    DataSourceID: 'helloWorldConfig',
-    StoreType: 'kv',
+const messageMetadata = {
+	...databox.NewDataSourceMetadata(),
+	Description: 'Message view metadata',
+	ContentType: 'application/json',
+	Vendor: 'Databox Inc.',
+	DataSourceType: 'message-view-config:1',
+	DataSourceID: 'message-view-metadata',
+	StoreType: 'kv',
 }
 
-//create store schema for an actuator (i.e a store that can be written to by an app)
-const helloWorldActuator = {
-    ...metaData,
-    Description: 'hello world actuator',
-    ContentType: 'application/json',
-    Vendor: 'Databox Inc.',
-    DataSourceType: 'helloWorldActuator',
-    DataSourceID: 'helloWorldActuator',
-    StoreType: 'ts/blob',
-    IsActuator: true,
+//create store schema for a message actuator (i.e a store that can be written to by an app)
+const messageActuator = {
+	...databox.NewDataSourceMetadata(),
+	Description: 'Messages to view',
+	ContentType: 'application/json',
+	Vendor: 'Databox Inc.',
+	DataSourceType: 'message-view:1',
+	DataSourceID: 'Messages',
+	StoreType: 'ts/blob',
+	IsActuator: true,
 }
 
 ///now create our stores using our clients.
-store.RegisterDatasource(helloWorldConfig).then(() => {
-    console.log("registered helloWorldConfig");
-    //now register the actuator
-    return store.RegisterDatasource(helloWorldActuator)
-}).catch((err) => { console.log("error registering helloWorld config datasource", err) }).then(() => {
-    console.log("registered helloWorldActuator, observing", helloWorldActuator.DataSourceID);
-    store.TSBlob.Observe(helloWorldActuator.DataSourceID, 0)
-        .catch((err) => {
-            console.log("[Actuation observing error]", err);
-        })
-        .then((eventEmitter) => {
-            if (eventEmitter) {
-                eventEmitter.on('data', (data) => {
-                    console.log("[Actuation] data received ", data);
-                });
-            }
-        })
-        .catch((err) => {
-            console.log("[Actuation error]", err);
-        });
+store.RegisterDatasource(messageMetadata).then(() => {
+	console.log("registered message metadata");
+	//now register the actuator
+	return store.RegisterDatasource(messageActuator)
+}).catch((err) => { console.log("error registering datasources", err) }).then(() => {
+	console.log("registered messageActuator, observing", messageActuator.DataSourceID);
+	store.TSBlob.Observe(messageActuator.DataSourceID, 0)
+	.catch((err) => {
+		console.log("[Actuation observing error]", err);
+	})
+	.then((eventEmitter) => {
+		if (eventEmitter) {
+			eventEmitter.on('data', (data) => {
+				console.log("[Actuation] data received ", data);
+			});
+			eventEmitter.on('error', (err) => {
+				console.log("[Actuation error]", err);
+			});
+		}
+	});
 });
 
 //set up webserver to serve driver endpoints
@@ -72,15 +69,10 @@ app.get("/", function (req, res) {
 });
 
 app.get("/ui", function (req, res) {
-    store.KV.Read(helloWorldConfig.DataSourceID, "config").then((result) => {
-        console.log("result:", helloWorldConfig.DataSourceID, result);
-        res.render('index', { config: result.value });
-    }).catch((err) => {
-        console.log("get config error", err);
-        res.send({ success: false, err });
-    });
+    res.render('index', {});
 });
 
+/*
 app.post('/ui/setConfig', (req, res) => {
 
     const config = req.body.config;
@@ -97,7 +89,7 @@ app.post('/ui/setConfig', (req, res) => {
         res.send({ success: true });
     });
 });
-
+*/
 app.get("/status", function (req, res) {
     res.send("active");
 });

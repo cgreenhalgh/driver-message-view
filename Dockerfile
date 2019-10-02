@@ -10,16 +10,16 @@ apk del build-base pkgconfig libsodium-dev python zeromq-dev
 ADD ./package.json package.json
 
 # only if using git...
-RUN apk --no-cache add git
+#RUN apk --no-cache add git
 
 RUN npm install --production
 
 USER databox
-ADD ./main.js main.js
-ADD ./views views
+ADD . /app/
 
 LABEL databox.type="driver"
 
 EXPOSE 8080
 
 CMD ["npm","run","start-prod"]
+#CMD ["sleep", "30000000"]

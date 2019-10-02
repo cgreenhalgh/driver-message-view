@@ -12,16 +12,40 @@ Todo:
 
 Chris Greenhalgh, The University of Nottinhgam, 2019.
 
-## Design notes
+## Data source
 
-Messages could have:
-- title
-- content - html?
-- topic - used for threading/override
-- priority - for sort
-- datetime
+The datasource type is "message-view:1".
+The store type is ts/blob.
+The data type is a JSON object with fields:
+- `title` (string) message title
+- `topic` (string) optional message topic (used to thread messages)
+- `content` (string) message content, html
+- `priority` (number) priority used to sort messages, default 0
+
+e.g.
+```
+{
+  "data": {
+    "title":"An example message",
+    "topic":"Testing",
+    "content":"<p>Hello! great news...</p>",
+    "priority":1
+  },
+  "timestamp": 123456789
+}
+```
+
+Time is taken from TS time.
+
+## Design notes
 
 client-side message state:
 - read
 - archived
+
+group messages by topic.
+
+future version might have additional requirements for archiving messages.
+
+prompt at top with unread/new messages.
 

@@ -1,11 +1,11 @@
 {
-  "name": "driver-helloworld-node",
+  "name": "driver-message-view",
   "databoxVersion": "0.5.2",
   "databoxRepository": "databoxsystems",
   "databoxPassword": "databoxDev",
-  "databoxDevSrcMnt": "[{\"ContName\":\"driver-helloworld-node\",\"ContSrcPath\":\"/src\",\"HostSrcPath\":\"/Users/tosh/Projects/me-box/databox-quickstart/node/driver/src\"}]",
-  "version": "1.0.0",
-  "description": "databox",
+  "databoxDevSrcMnt": "[{\"ContName\":\"driver-message-view\",\"ContSrcPath\":\"/src\",\"HostSrcPath\":\"/Users/tosh/Projects/me-box/databox-quickstart/node/driver/src\"}]",
+  "version": "0.1.0",
+  "description": "databox driver",
   "main": "main.js",
   "scripts": {
     "//": "start-dev is used to start this app if its installed on to a databox with a :dev tag",
@@ -21,7 +21,7 @@
     "wipe-databox": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock --network host -t ${npm_package_databoxRepository}/databox-amd64:${npm_package_databoxVersion} /databox wipe -y ",
     "upload-manifest": "curl -sL --cookie-jar /tmp/databox-jar -H \"authorization:Token ${npm_package_databoxPassword}\" --insecure --http1.1 -w \"%{http_code}\\n\" https://127.0.0.1/api/connect -o /dev/null; curl -s  --insecure --http1.1 --cookie /tmp/databox-jar -H 'Content-Type: application/json' -X POST -d @databox-manifest.json -L 'https://127.0.0.1/app-store/ui/api/addManifest'"
   },
-  "author": "Databox Inc",
+  "author": "chris.greenhalgh@nottingham.ac.uk",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -29,6 +29,7 @@
     "express": "^4.16.3",
     "http": "0.0.0",
     "https": "^1.0.0",
-    "node-databox": "https://github.com/cgreenhalgh/lib-node-databox.git"
+    "node-databox": "^0.10.8",
+    "ws": "^6.0.0"
   }
 }

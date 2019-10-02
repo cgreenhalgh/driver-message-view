@@ -1,21 +1,17 @@
 {
     "manifest-version": 1,
-    "name": "driver-helloworld-node",
-    "docker-registry": "databoxsystems",
-    "docker-image-tag": "0.5.2",
+    "name": "driver-message-view",
     "version": "0.1.0",
-    "description": "basic node hello world driver",
-    "author": "Databox Inc.",
+    "description": "list of messages view",
+    "author": "chris.greenhalgh@nottingham.ac.uk",
     "licence": "MIT",
     "databox-type": "driver",
     "tags": [
-        "test",
-        "hello world"
     ],
-    "homepage": "https://github.com/me-box/databox-quickstart",
+    "homepage": "https://github.com/cgreenhalgh/driver-message-view",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/me-box/databox-quickstart.git"
+        "url": "git+https://github.com/cgreenhalgh/driver-message-view.git"
     },
     "datasources": [],
     "network-permissions": [],
@@ -26,8 +22,8 @@
     },
     "provides": [
         {
-            "data-source-type": "helloWorldActuator",
-            "description": "hello world actuator",
+            "data-source-type": "message-view:1",
+            "description": "Messages",
             "store-type": "ts/blob",
             "schema": {}
         }
