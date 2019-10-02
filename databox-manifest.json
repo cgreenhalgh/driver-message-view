@@ -1,0 +1,35 @@
+{
+    "manifest-version": 1,
+    "name": "driver-helloworld-node",
+    "docker-registry": "databoxsystems",
+    "docker-image-tag": "0.5.2",
+    "version": "0.1.0",
+    "description": "basic node hello world driver",
+    "author": "Databox Inc.",
+    "licence": "MIT",
+    "databox-type": "driver",
+    "tags": [
+        "test",
+        "hello world"
+    ],
+    "homepage": "https://github.com/me-box/databox-quickstart",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/me-box/databox-quickstart.git"
+    },
+    "datasources": [],
+    "network-permissions": [],
+    "resource-requirements": {},
+    "export-whitelist": [],
+    "resource-requirements": {
+        "store": "core-store"
+    },
+    "provides": [
+        {
+            "data-source-type": "helloWorldActuator",
+            "description": "hello world actuator",
+            "store-type": "ts/blob",
+            "schema": {}
+        }
+    ]
+}
