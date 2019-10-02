@@ -7,8 +7,111 @@
     <meta name="theme-color" content="#000000">
     <link rel="shortcut icon" href="/favicon.ico">
     <title>Messages</title>
-</head>
+<script>
+function baseWSProtocol() {
+	return (<%= testing %>) ?"ws" : "wss";
+}
+	
+function baseHTTPProtocol() {
+	return (<%= testing %>) ?"http" : "https";
+}
+	
+function baseURL() {
+	if (<%= testing %>) {
+		return "127.0.0.1:8090"
+	} else {
+		const paths = window.location.pathname.split("/");
+		if (paths.length > 1) {
+			if (paths[paths.length - 2] != "") {
+				pathname = `/${paths[paths.length - 2]}`;
+			}
+		}
+	return `${window.location.host}${pathname}`
+	}
+}
+function dismiss(id) {
+	var xhr = new XMLHttpRequest();
+	console.log("calling", `${baseHTTPProtocol()}://${baseURL()}/ui/dismiss/${encodeURIComponent(id)}`);
+	xhr.open('POST', `${baseHTTPProtocol()}://${baseURL()}/ui/dismiss/${encodeURIComponent(id)}`);
+	xhr.onload = function () {
+		if (xhr.status === 200) {
+			console.log(xhr.responseText);
+		}
+		else {
+			console.log(xhr.status);
+		}
+	};
+	xhr.send();
+}
+window.addEventListener('load', function () {
+	console.log("creating websocket", `${baseWSProtocol()}://${baseURL()}/ui/ws`)
+	const socket = new WebSocket(`${baseWSProtocol()}://${baseURL()}/ui/ws`);
 
+	socket.onopen = function () {
+		console.log("successfully connected to server websocket")
+	}
+
+	socket.onclose = function () {
+		console.log("socket closed");
+		//if the ws is closed then refresh to reconect
+		//this gives live ui reload ;-) in the dev image
+		setTimeout(() => { window.location.reload(); }, 2000);
+	}
+
+	socket.onerror = function (err) {
+		console.log("socket error!");
+	}
+
+	socket.onmessage = function (msg) {
+		console.log("message, data: ", msg.data);
+		var data = JSON.parse(msg.data);
+		var parent = document.getElementById("messages");
+		var item;
+		if (!!data.id) {
+			item = document.getElementById(data.id);
+		}
+		if ( !item ) {
+			item = document.createElement("div");
+			item.onclick = function(ev) {
+				console.log('hide message '+data.id)
+				if (data.id)
+					dismiss(data.id)
+				item.classList.add("hidden");
+				item.remove();
+			}
+			item.classList.add("message");
+			item.id = data.id;
+			parent.prepend(item)
+		}
+		item.innerHTML = data.html;
+		if ( data.archived ) {
+			item.classList.add("hidden");
+		}
+	}
+});
+</script>
+<style>
+.message {
+	margin: 10pt;
+	border: solid #888 1px;
+	padding: 0.5em;
+	background: #eee;
+}
+.title {
+	font-size: 130%;
+}
+.content {
+	font-family: Sans-serif;
+}
+.time {
+	text-align: right;
+	font-size: 80%;
+}
+.hidden {
+	display: none;
+}
+</style>
+</head>
 <body>
 	<h2>Messages</h2>
 	<div id="messages"></div>
